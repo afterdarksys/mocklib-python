@@ -2,7 +2,11 @@
 import os
 import requests
 from typing import Optional
-from .resources import VPCResource, LambdaResource, DynamoDBResource, SQSResource, StorageResource
+from .resources import (
+    VPCResource, LambdaResource, DynamoDBResource, SQSResource, StorageResource,
+    OrganizationResource, DomainResource, CloudResource, ProjectResource,
+    IAMResource, GeneratorResource, UtilitiesResource
+)
 from .exceptions import APIError, AuthenticationError
 
 
@@ -49,6 +53,19 @@ class MockFactory:
         self.dynamodb = DynamoDBResource(self)
         self.sqs = SQSResource(self)
         self.storage = StorageResource(self)
+
+        # Hierarchical resources
+        self.organization = OrganizationResource(self)
+        self.domain = DomainResource(self)
+        self.cloud = CloudResource(self)
+        self.project = ProjectResource(self)
+
+        # IAM (Identity and Access Management)
+        self.iam = IAMResource(self)
+
+        # Data generation and utilities
+        self.generator = GeneratorResource(self)
+        self.utilities = UtilitiesResource(self)
 
     def request(
         self,
@@ -107,6 +124,6 @@ class MockFactory:
         """POST request"""
         return self.request("POST", endpoint, json=json)
 
-    def delete(self, endpoint: str) -> dict:
+    def delete(self, endpoint: str, params: Optional[dict] = None) -> dict:
         """DELETE request"""
-        return self.request("DELETE", endpoint)
+        return self.request("DELETE", endpoint, params=params)
