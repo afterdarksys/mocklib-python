@@ -5,7 +5,9 @@ from typing import Optional
 from .resources import (
     VPCResource, LambdaResource, DynamoDBResource, SQSResource, StorageResource,
     OrganizationResource, DomainResource, CloudResource, ProjectResource,
-    IAMResource, GeneratorResource, UtilitiesResource
+    IAMResource, GeneratorResource, UtilitiesResource,
+    EC2Resource, STSResource, Route53Resource, SNSResource,
+    OCIResource, GCPComputeResource, AzureResource,
 )
 from .exceptions import APIError, AuthenticationError
 
@@ -53,6 +55,17 @@ class MockFactory:
         self.dynamodb = DynamoDBResource(self)
         self.sqs = SQSResource(self)
         self.storage = StorageResource(self)
+
+        # AWS service clients
+        self.ec2 = EC2Resource(self)
+        self.sts = STSResource(self)
+        self.route53 = Route53Resource(self)
+        self.sns = SNSResource(self)
+
+        # Multi-cloud providers
+        self.oci = OCIResource(self)
+        self.gcp = GCPComputeResource(self)
+        self.azure = AzureResource(self)
 
         # Hierarchical resources
         self.organization = OrganizationResource(self)
@@ -127,3 +140,11 @@ class MockFactory:
     def delete(self, endpoint: str, params: Optional[dict] = None) -> dict:
         """DELETE request"""
         return self.request("DELETE", endpoint, params=params)
+
+    def put(self, endpoint: str, json: Optional[dict] = None) -> dict:
+        """PUT request"""
+        return self.request("PUT", endpoint, json=json)
+
+    def patch(self, endpoint: str, json: Optional[dict] = None) -> dict:
+        """PATCH request"""
+        return self.request("PATCH", endpoint, json=json)
